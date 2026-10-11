@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ノクターン Op.9-2 分解図</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* layout: 1カラム。上に貼り付くピアノロール(曲の地図)＋その下に「和声」「テクニック」の2部。各項目は A/B 聴き比べボタンが主役 */
+:root{
+  --bg:#eceff7; --surface:#f8f9fd; --ink:#1a1f38; --muted:#5a6182; --line:#cdd3e4;
+  --mel:#b4611a; --chord:#256f91; --bass:#6846a8; --on-fill:#ffffff;
+  --display:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111428; --surface:#1a1e3a; --ink:#e9ebf8; --muted:#9ba2c4; --line:#2f345c;
+    --mel:#f1b25a; --chord:#6dc0de; --bass:#b296f0; --on-fill:#111428; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111428; --surface:#1a1e3a; --ink:#e9ebf8; --muted:#9ba2c4; --line:#2f345c;
+  --mel:#f1b25a; --chord:#6dc0de; --bass:#b296f0; --on-fill:#111428; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.75;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:760px;margin-inline:auto;display:flex;flex-direction:column;gap:40px}
+header.top{padding-block:36px 0;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:13px;letter-spacing:.12em;color:var(--muted);margin:0}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,46px);line-height:1.2;margin:0;text-wrap:balance}
+h1 span{color:var(--mel)}
+.lede{margin:0;max-width:34em}
+h2{font-family:var(--display);font-weight:800;font-size:28px;line-height:1.3;margin:0;text-wrap:balance}
+h2 small{display:block;font-family:var(--body);font-weight:500;font-size:14px;color:var(--muted);letter-spacing:.04em}
+h3{font-size:19px;font-weight:700;line-height:1.4;margin:0;text-wrap:balance}
+p{margin:0}
+.muted{color:var(--muted);font-size:14px}
+b.mel{color:var(--mel)} b.chord{color:var(--chord)} b.bass{color:var(--bass)}
+
+/* 貼り付くロール */
+.stage{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px 8px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+#roll{display:block;width:100%;height:150px;background:var(--surface);border-radius:6px}
+.transport{display:flex;align-items:center;gap:12px;min-width:0}
+#now{min-width:0;font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+#now strong{color:var(--ink);font-weight:700}
+
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid var(--mel);outline-offset:2px}
+.pb{border:1.5px solid var(--ink);background:transparent;border-radius:999px;padding:7px 16px;font-weight:700;font-size:15px;line-height:1.3;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.pb::before{content:"";width:0;height:0;border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent currentColor;flex:none}
+.pb.on::before{width:10px;height:10px;border:0;background:currentColor}
+.pb.fill{background:var(--ink);color:var(--bg)}
+.pb.on{background:var(--mel);border-color:var(--mel);color:var(--on-fill)}
+.ab{display:flex;flex-wrap:wrap;gap:10px}
+
+.controls{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center}
+.layers{display:flex;flex-wrap:wrap;gap:8px}
+.layers label{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:700;cursor:pointer}
+.layers input{accent-color:var(--ink);margin:0}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.tempo{display:flex;align-items:center;gap:8px;font-size:14px}
+.tempo input{width:140px;max-width:100%;accent-color:var(--mel)}
+.tempo output{font-variant-numeric:tabular-nums;font-weight:700;min-width:3.2em}
+
+section.part{display:flex;flex-direction:column;gap:28px}
+.item{display:flex;flex-direction:column;gap:10px;padding-top:22px;border-top:1px solid var(--line)}
+.item p{max-width:36em}
+
+/* 和音タイル */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tile{min-width:0;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:6px;padding:8px 8px 9px;display:flex;flex-direction:column;gap:2px;line-height:1.3}
+.tile .pos{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:4px}
+.tile .nm{font-weight:700;font-size:clamp(14px,3.6vw,18px);overflow-wrap:anywhere}
+.tile .rn{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.tile .mood{font-size:12px;font-weight:500;overflow-wrap:anywhere}
+.tile.on{border-color:var(--mel);box-shadow:inset 0 0 0 1.5px var(--mel)}
+.fn{font-size:10px;font-weight:700;border-radius:3px;padding:0 4px;border:1px solid var(--muted);color:var(--muted)}
+.fn.d{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.fn.s{border-style:dashed}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+
+.beat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-width:420px}
+.beat div{border-radius:6px;padding:8px 6px;text-align:center;font-weight:700;font-size:15px;line-height:1.35;border:1.5px solid}
+.beat small{display:block;font-weight:500;font-size:11px}
+.beat .b{border-color:var(--bass);color:var(--bass)} .beat .c{border-color:var(--chord);color:var(--chord)}
+
+footer{border-top:1px solid var(--line);padding-top:18px;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+footer a{color:inherit}
+</style>
+
+<style>:root{color-scheme:light}@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark}}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">ショパン／ノクターン 変ホ長調 Op.9-2・冒頭4小節</p>
+    <h1>あの名曲、<span>バラして</span>聴いてみる</h1>
+    <p class="lede">読むのはあと。まず押す。AとBを聴き比べると、ショパンが何をしたかが耳でわかる。1項目10秒。</p>
+    <div class="controls">
+      <div class="layers" role="group" aria-label="鳴らすパート">
+        <label><input type="checkbox" id="lyMel" checked><span class="dot" style="background:var(--mel)"></span>メロディ</label>
+        <label><input type="checkbox" id="lyChord" checked><span class="dot" style="background:var(--chord)"></span>和音</label>
+        <label><input type="checkbox" id="lyBass" checked><span class="dot" style="background:var(--bass)"></span>ベース</label>
+      </div>
+      <label class="tempo" for="tempo">はやさ <input type="range" id="tempo" min="80" max="150" value="132" step="2"><output id="tempoOut" for="tempo">♪=132</output></label>
+    </div>
+    <p class="muted">上のチェックを外して「全部鳴らす」を押すと、パート別に聴ける。♪=132 はショパン本人の指定。音は FM 音源（サイン波を別のサイン波で揺らす方式）で作ったピアノ風。</p>
+  </header>
+
+  <div class="stage">
+    <canvas id="roll" aria-label="ピアノロール。横が時間、縦が音の高さ"></canvas>
+    <div class="transport">
+      <button class="pb fill" data-demo="full" id="btnFull">全部鳴らす</button>
+      <div id="now" aria-live="off">横＝時間、縦＝高さ。<b class="mel">上がメロディ</b>、<b class="chord">真ん中が和音</b>、<b class="bass">下がベース</b></div>
+    </div>
+  </div>
+
+  <section class="part" id="harmony">
+    <h2>和声 <small>どの和音を、どの順で並べたか</small></h2>
+
+    <div class="item">
+      <h3>和音は16個。全部「家・おでかけ・帰りたい」のどれか</h3>
+      <p>1拍に和音1個、4小節で16個。タイルを押すとその和音だけ鳴る。★は「よその調から借りてきた音」入りで、ここが色っぽさの正体。</p>
+      <div class="tiles" id="tiles"></div>
+      <div class="legend">
+        <span><i class="fn">家</i>トニック。落ち着く</span>
+        <span><i class="fn s">外</i>サブドミナント。出かけた</span>
+        <span><i class="fn d">緊</i>ドミナント系。次へ行きたくてムズムズ</span>
+      </div>
+    </div>
+
+    <div class="item">
+      <h3>1小節目：家にいるのに、一瞬ざわっとする</h3>
+      <p>ベースは <b class="bass">ミ♭のまま</b>動かない。なのに上の和音だけ D°7（不安な和音）にすり替わる。足は家、頭だけ外。これを主音ペダルと呼ぶ。4拍目でベースがレに一歩おりて、次の小節へ滑り出す。</p>
+      <div class="ab">
+        <button class="pb" data-demo="h1a">A ずっと家のまま</button>
+        <button class="pb fill" data-demo="h1b">B ショパン</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <h3>2小節目：1音変えるだけで「次に行くぞ」になる</h3>
+      <p>この調のふつうの和音は Cm（ド・ミ♭・ソ）。ショパンはミ♭をミ♮に上げて C7 にした。ミ♮は半音上のファに行きたがる音なので、次の Fm へ強く引っぱられる。借りてきたドミナント（副属七）という技。</p>
+      <div class="ab">
+        <button class="pb" data-demo="h2a">A ふつうの Cm</button>
+        <button class="pb fill" data-demo="h2b">B ショパンの C7</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <h3>3小節目：帰ると見せかけて帰らない</h3>
+      <p>B♭7 は「家（E♭）に帰るぞ」の和音。そのまま帰ると曲が3小節目で終わってしまう。ショパンはフェイントで G7 → Cm（暗いほうの家）へ逃げて、さらに A°7 でいちばん緊張させる。</p>
+      <div class="ab">
+        <button class="pb" data-demo="h3a">A すぐ帰っちゃう</button>
+        <button class="pb fill" data-demo="h3b">B ショパン（4小節目まで）</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <h3>ベースだけ聴くと、ただの階段</h3>
+      <p>前半は ミ♭→レ→ド と<b class="bass">おりる</b>。後半は シ♭→シ→ド と半音で<b class="bass">のぼり</b>、ラ→シ♭ と挟みこんで、最後に シ♭→ミ♭ で着地。凝った和音に聞こえても、土台はなめらかな線1本。</p>
+      <div class="ab"><button class="pb fill" data-demo="h4">ベースだけ鳴らす</button></div>
+    </div>
+
+    <div class="item">
+      <h3>4小節目：ためて、ためて、ただいま</h3>
+      <p>B♭7sus4（まだ解決しない）→ B♭7（帰るぞ）→ E♭（家）。帰る直前に一拍ぶん余計にじらすから、着いたときに気持ちいい。</p>
+      <div class="ab"><button class="pb fill" data-demo="h5">4小節目を鳴らす</button></div>
+    </div>
+  </section>
+
+  <section class="part" id="technique">
+    <h2>テクニック <small>その和音を、どう鳴らしたか</small></h2>
+
+    <div class="item">
+      <h3>リズム：左手はずっと「ズン・チャッ・チャッ」</h3>
+      <p>12/8拍子は「3つで1拍」が4回。左手は毎拍、低い1音 → 和音 → もう少し高い和音。同じ和音でも、まとめて押すと止まって聞こえ、ばらすと揺れて進む。</p>
+      <div class="beat" aria-hidden="true">
+        <div class="b">ズン<small>低い1音</small></div><div class="c">チャッ<small>2音</small></div><div class="c">チャッ<small>3音・少し上</small></div>
+      </div>
+      <div class="ab">
+        <button class="pb" data-demo="t1a">A まとめて押す</button>
+        <button class="pb fill" data-demo="t1b">B ズン・チャッ・チャッ</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <h3>ボイシング：低音は遠くに1個、和音は真ん中、歌は上</h3>
+      <p>音の置き場所の話。低い音域で音を詰めると濁る（団子）。ショパンは<b class="bass">ベースを1音だけ</b>ずっと下に離し、<b class="chord">和音</b>を真ん中に固め、<b class="mel">メロディ</b>の下にすき間を空けた。上のロールで3段に分かれて見えるのがそれ。</p>
+      <div class="ab">
+        <button class="pb" data-demo="t2a">A 団子（寄せて詰めた）</button>
+        <button class="pb fill" data-demo="t2b">B ショパンの配置</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <h3>メロディの飾り：骨に、くるっと回り道を足す</h3>
+      <p>4小節目の16分音符は、骨だけなら「シ♭をのばしてレ→ミ♭」。そこへ隣の音をくるっと回る動き（ターン）を足している。1小節目の ソ→ファ→ソ も同じ発想。歌手のこぶしの真似。</p>
+      <div class="ab">
+        <button class="pb" data-demo="t3a">A 骨だけ</button>
+        <button class="pb fill" data-demo="t3b">B 飾りつき</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <h3>大ジャンプ：ここぞで上に跳ぶ</h3>
+      <p>出だしは6度、2小節目は1オクターブ、4小節目は10度。小節が進むほど跳ぶ幅が広がる。跳んだ先の高い音が、その小節でいちばん聴かせたい音。</p>
+      <div class="ab"><button class="pb fill" data-demo="t4">ジャンプ3連発</button></div>
+    </div>
+
+    <div class="item">
+      <h3>ペダルと音量差：伴奏は小さく溶かし、歌だけ前に出す</h3>
+      <p>ペダルを踏むとベースが拍の終わりまで残り、3つの音が1つの和音に溶ける。さらにメロディを伴奏の倍くらい強く弾く。両方やめると、同じ音符なのに練習曲みたいになる。</p>
+      <div class="ab">
+        <button class="pb" data-demo="t5a">A ペダルなし・全部同じ強さ</button>
+        <button class="pb fill" data-demo="t5b">B ペダルあり・歌を前に</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>音符の出典：パリ初版（M. Schlesinger）を符号化した Fryderyk Chopin Institute「First Editions of Fryderyk Chopin's Music」（CC BY 4.0）。同じ初版の画像は <a href="https://imslp.org/wiki/Nocturnes,_Op.9_(Chopin,_Fr%C3%A9d%C3%A9ric)">IMSLP の Op.9 のページ</a>で見られる。</p>
+    <p>和音名と機能の分類はこのページ作成時の解釈。4小節目1拍目（B♭7sus4）など、別の読み方がありうる箇所を含む。A版はすべて比較用に作った改変で、原曲ではない。テンポは一定で、ルバートは再現していない。</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- 楽譜データ（時間の単位は8分音符。0＝1小節目の頭） ---------- */
+const MEL=[[-1,70,1],[0,79,4],[4,77,1],[5,79,1],[6,77,3],[9,75,2],[11,70,1],
+ [12,79,2],[14,72,1],[15,84,2],[17,79,1],[18,82,3],[21,80,2],[23,79,1],
+ [24,77,3],[27,79,2],[29,74,1],[30,75,3],[33,72,3],
+ [36,70,1],[37,86,1],[38,84,1],[39,82,.5],[39.5,80,.5],[40,79,.5],[40.5,80,.5],[41,72,.5],[41.5,74,.5],[42,75,3]];
+/* 1拍ごと: [ベース, 2つ目の8分の和音, 3つ目の8分の和音] */
+const LH=[
+ [39,[55,63],[58,63,67]],[51,[56,62],[59,62,68]],[39,[55,63],[58,63,67]],[38,[55,63],[58,63,67]],
+ [36,[55,64],[58,64,67]],[48,[55,64],[60,64,70]],[41,[53,61],[58,61,64]],[41,[53,60],[56,60,65]],
+ [46,[53,62],[58,62,68]],[47,[55,65],[62,65,67]],[48,[55,63],[60,63,67]],[45,[54,63],[60,63,66]],
+ [46,[53,63],[58,63,68]],[34,[53,62],[58,68]],[39,[55,63],[58,63,67]],[51,[55,63],[58,63,67]]];
+const CH=[
+ ["E♭","I","家","t",0],["D°7/E♭","vii°7（主音ペダル上）","ざわっ","d",0],["E♭","I","家","t",0],["E♭/D","I（ベース下行）","一歩おりる","t",0],
+ ["C7","V7/ii","Fmへ行くぞ","d",1],["C7","V7/ii","念押し","d",1],["E°7/F","vii°7/ii（Fペダル上）","じらす","d",1],["Fm","ii","着いた、切ない","s",0],
+ ["B♭7","V7","帰るぞ","d",0],["G7/B","V7/vi","フェイント","d",1],["Cm","vi","暗いほうの家","t",0],["A°7","vii°7/V","いちばん緊張","d",1],
+ ["B♭7sus4","V7sus4","ためる","d",0],["B♭7","V7","今度こそ帰る","d",0],["E♭","I","ただいま","t",0],["E♭","I","余韻","t",0]];
+const FN={t:"家",s:"外",d:"緊"};
+
+function build(o){
+  o=Object.assign({mel:true,chord:true,bass:true,from:-1,to:48,pedal:true,balance:true,lh:"waltz",melody:MEL,lhData:LH},o||{});
+  const ev=[];
+  if(o.mel) for(const [t,m,d] of o.melody){
+    if(t<o.from||t>=o.to) continue;
+    ev.push({t,d,s:d+0.08,m,v:o.balance?(d<1?0.62:0.86):0.55,part:"mel"});
+  }
+  o.lhData.forEach((b,i)=>{
+    const t0=i*3; if(t0<o.from||t0>=o.to) return;
+    let bass=b[0],c1=b[1],c2=b[2];
+    if(o.lh==="dango"){bass+=12;c1=c1.map(x=>x-12);c2=c2.map(x=>x-12);}
+    if(o.lh==="block"){
+      if(o.bass) ev.push({t:t0,d:3,s:3.2,m:bass,v:0.6,part:"bass"});
+      if(o.chord) [...new Set(c1.concat(c2))].forEach(m=>ev.push({t:t0,d:3,s:3.2,m,v:0.38,part:"chord"}));
+      return;
+    }
+    const sus=k=>o.pedal?(3-k)+0.3:0.85;
+    if(o.bass) ev.push({t:t0,d:1,s:sus(0),m:bass,v:o.balance?0.62:0.55,part:"bass"});
+    if(o.chord){
+      c1.forEach(m=>ev.push({t:t0+1,d:1,s:sus(1),m,v:o.balance?0.33:0.55,part:"chord"}));
+      c2.forEach(m=>ev.push({t:t0+2,d:1,s:sus(2),m,v:o.balance?0.37:0.55,part:"chord"}));
+    }
+  });
+  ev.sort((a,b)=>a.t-b.t);
+  return ev;
+}
+function withLH(map){const a=LH.slice();for(const k in map)a[k]=map[k];return a;}
+const HOME=[39,[55,63],[58,63,67]];
+
+const DEMOS={
+ full:()=>({ev:build({mel:$("lyMel").checked,chord:$("lyChord").checked,bass:$("lyBass").checked}),tiles:true}),
+ h1a:()=>({ev:build({to:12,lhData:withLH({1:HOME,3:HOME})}),label:"A：ベースも和音もずっと E♭"}),
+ h1b:()=>({ev:build({to:12}),tiles:true}),
+ h2a:()=>({ev:build({from:11,to:24,lhData:withLH({4:[36,[55,63],[58,63,67]],5:[48,[55,63],[60,63,70]],6:[41,[53,60],[56,60,65]]})}),label:"A：C7 を Cm に戻した版"}),
+ h2b:()=>({ev:build({from:11,to:24}),tiles:true}),
+ h3a:()=>({ev:build({from:24,to:36,melody:[[24,77,3],[27,79,2],[29,74,1],[30,75,6]],lhData:withLH({9:[46,[53,62],[58,62,68]],10:HOME,11:[51,[55,63],[58,63,67]]})}),label:"A：B♭7 からそのまま E♭ へ。もう終わり"}),
+ h3b:()=>({ev:build({from:24}),tiles:true}),
+ h4:()=>({ev:build({mel:false,chord:false,from:0}),tiles:true}),
+ h5:()=>({ev:build({from:36}),tiles:true}),
+ t1a:()=>({ev:build({mel:false,from:0,to:24,lh:"block"}),label:"A：1拍ぶんをまとめて押す"}),
+ t1b:()=>({ev:build({mel:false,from:0,to:24}),label:"B：ズン・チャッ・チャッ"}),
+ t2a:()=>({ev:build({to:12,lh:"dango"}),label:"A：ベースを上げ、和音を下げて詰めた"}),
+ t2b:()=>({ev:build({to:12}),label:"B：下・真ん中・上の3段"}),
+ t3a:()=>({ev:build({from:36,melody:[[36,70,1],[37,86,1],[38,84,1],[39,82,2],[41,74,1],[42,75,3]]}),label:"A：骨だけのメロディ"}),
+ t3b:()=>({ev:build({from:36}),label:"B：16分音符の飾りつき"}),
+ t4:()=>({ev:[[0,70,1.5],[1.5,79,3],[6,72,1.5],[7.5,84,3],[12,70,1.5],[13.5,86,3]].map(([t,m,d])=>({t,d,s:d+0.3,m,v:0.86,part:"mel"})),label:"6度 → 1オクターブ → 10度"}),
+ t5a:()=>({ev:build({to:24,pedal:false,balance:false}),label:"A：ペダルなし・全部同じ強さ"}),
+ t5b:()=>({ev:build({to:24}),label:"B：ペダルあり・メロディ強め"})
+};
+function tileDemo(i){
+  const b=LH[i],t=i*3,ev=[{t,d:3,s:5,m:b[0],v:0.6,part:"bass"}];
+  [...new Set(b[1].concat(b[2]))].forEach((m,k)=>ev.push({t:t+0.12*(k+1),d:3,s:5,m,v:0.45,part:"chord"}));
+  return {ev,tiles:true,endPad:3};
+}
+
+/* ---------- FM音源 ---------- */
+let ctx=null,master=null;
+function initAudio(){
+  if(ctx){ if(ctx.state==="suspended") ctx.resume(); return; }
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  master=ctx.createGain(); master.gain.value=0.9;
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=6200;
+  const comp=ctx.createDynamicsCompressor(); comp.threshold.value=-16; comp.ratio.value=3;
+  master.connect(lp); lp.connect(comp); comp.connect(ctx.destination);
+  const len=Math.floor(ctx.sampleRate*1.8),buf=ctx.createBuffer(2,len,ctx.sampleRate);
+  for(let c=0;c<2;c++){const d=buf.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);}
+  const conv=ctx.createConvolver(); conv.buffer=buf;
+  const wet=ctx.createGain(); wet.gain.value=0.2;
+  lp.connect(conv); conv.connect(wet); wet.connect(comp);
+}
+/* 2オペレータFM＋打鍵用の短いモジュレータ。変調の深さを時間で減らすと、打った瞬間だけ明るいピアノ風になる */
+function voice(bus,m,t,dur,vel){
+  const f=440*Math.pow(2,(m-69)/12);
+  const k=Math.min(1,Math.max(0,(m-28)/64));
+  const car=ctx.createOscillator(); car.frequency.value=f;
+  const mod=ctx.createOscillator(); mod.frequency.value=f;
+  const mg=ctx.createGain(); const idx=(2.3-1.6*k)*(0.4+0.8*vel);
+  mg.gain.setValueAtTime(idx*f,t); mg.gain.setTargetAtTime(idx*f*0.2,t,0.1+0.28*(1-k));
+  mod.connect(mg); mg.connect(car.frequency);
+  const ham=ctx.createOscillator(); ham.frequency.value=f*3.01;
+  const hg=ctx.createGain(); hg.gain.setValueAtTime(f*1.3*vel,t); hg.gain.setTargetAtTime(0,t,0.025);
+  ham.connect(hg); hg.connect(car.frequency);
+  const env=ctx.createGain(); const peak=0.2*vel*(1-0.3*k);
+  env.gain.setValueAtTime(0,t); env.gain.linearRampToValueAtTime(peak,t+0.006);
+  env.gain.setTargetAtTime(0,t+0.006,2.4-1.7*k);
+  const rel=ctx.createGain(); rel.gain.setValueAtTime(1,t); rel.gain.setTargetAtTime(0,t+dur,0.07);
+  car.connect(env); env.connect(rel);
+  let out=rel;
+  if(ctx.createStereoPanner){const p=ctx.createStereoPanner(); p.pan.value=(k-0.5)*0.7; rel.connect(p); out=p;}
+  out.connect(bus);
+  const end=t+dur+0.6;
+  [car,mod,ham].forEach(o=>{o.start(t);o.stop(end);});
+}
+
+/* ---------- 再生 ---------- */
+const $=id=>document.getElementById(id);
+let cur=null,timer=null,idleEv=build();
+const spe=()=>60/(+$("tempo").value);
+const posAt=time=>cur.pos0+(time-cur.t0)/cur.spe;
+const timeAt=pos=>cur.t0+(pos-cur.pos0)*cur.spe;
+
+function start(id,demo,btn){
+  initAudio(); stop();
+  if(!demo.ev.length){ $("now").textContent="パートが全部オフ。チェックを1つ入れて。"; return; }
+  const bus=ctx.createGain(); bus.connect(master);
+  const last=demo.ev.reduce((a,e)=>Math.max(a,e.t+e.d),0);
+  cur={id,ev:demo.ev,i:0,bus,spe:spe(),t0:ctx.currentTime+0.06,pos0:demo.ev[0].t-0.2,end:last+(demo.endPad||1.5),tiles:!!demo.tiles,label:demo.label||"",btn};
+  if(btn) btn.classList.add("on");
+  timer=setInterval(tick,40); tick(); requestAnimationFrame(frame);
+}
+function stop(natural){
+  if(!cur) return;
+  clearInterval(timer);
+  const b=cur.bus;
+  if(!natural){ b.gain.setTargetAtTime(0,ctx.currentTime,0.03); }
+  setTimeout(()=>{try{b.disconnect();}catch(e){}},natural?4000:400);
+  if(cur.btn) cur.btn.classList.remove("on");
+  cur=null; setTiles(-1); draw(null);
+}
+function tick(){
+  if(!cur) return;
+  const now=ctx.currentTime,h=posAt(now+0.2);
+  while(cur.i<cur.ev.length&&cur.ev[cur.i].t<=h){
+    const e=cur.ev[cur.i++];
+    voice(cur.bus,e.m,Math.max(timeAt(e.t),now+0.005),e.s*cur.spe,e.v);
+  }
+  if(posAt(now)>cur.end) stop(true);
+}
+function frame(){
+  if(!cur) return;
+  const pos=posAt(ctx.currentTime);
+  draw(pos);
+  const beat=(pos>=0&&pos<48)?Math.floor(pos/3):-1;
+  if(cur.tiles){
+    setTiles(beat);
+    if(beat>=0){const c=CH[beat];setNow("<strong>"+c[0]+"</strong>　"+c[2]+"（"+(Math.floor(beat/4)+1)+"小節 "+(beat%4+1)+"拍目）");}
+  }else setNow("<strong>"+cur.label+"</strong>");
+  requestAnimationFrame(frame);
+}
+let nowHtml="";
+function setNow(h){ if(h!==nowHtml){nowHtml=h;$("now").innerHTML=h;} }
+let tileOn=-1;
+function setTiles(i){
+  if(i===tileOn) return;
+  const ts=$("tiles").children;
+  if(tileOn>=0&&ts[tileOn]) ts[tileOn].classList.remove("on");
+  if(i>=0&&ts[i]) ts[i].classList.add("on");
+  tileOn=i;
+}
+
+/* ---------- ピアノロール ---------- */
+const cv=$("roll"),g=cv.getContext("2d");
+let col={};
+function readColors(){
+  const s=getComputedStyle(document.documentElement);
+  ["mel","chord","bass","line","muted","ink","surface"].forEach(k=>col[k]=s.getPropertyValue("--"+k).trim());
+}
+const T0=-1.6,T1=48.6,P0=31,P1=89;
+function draw(pos){
+  const r=cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  const W=Math.max(10,r.width),H=Math.max(10,r.height);
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
+  g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+  const x=t=>(t-T0)/(T1-T0)*W, y=m=>H-8-(m-P0)/(P1-P0)*(H-24);
+  const nh=Math.max(3.5,(H-24)/(P1-P0)*1.5);
+  g.font="11px sans-serif"; g.textBaseline="top";
+  for(let t=0;t<=48;t+=3){
+    g.strokeStyle=col.line; g.globalAlpha=t%12===0?1:0.45; g.lineWidth=1;
+    g.beginPath(); g.moveTo(Math.round(x(t))+.5,t%12===0?0:16); g.lineTo(Math.round(x(t))+.5,H); g.stroke();
+    if(t%12===0&&t<48){g.globalAlpha=1;g.fillStyle=col.muted;g.fillText((t/12+1)+"小節",x(t)+4,3);}
+  }
+  const ev=cur?cur.ev:idleEv;
+  for(const e of ev){
+    const on=pos!=null&&pos>=e.t&&pos<e.t+Math.max(e.d,0.5);
+    g.globalAlpha=on?1:(pos==null?0.85:0.5);
+    g.fillStyle=col[e.part];
+    const w=Math.max(2.5,x(e.t+e.d)-x(e.t)-1);
+    g.fillRect(x(e.t),y(e.m)-nh/2,w,nh);
+    if(on){g.strokeStyle=col.ink;g.lineWidth=1.5;g.strokeRect(x(e.t)-1,y(e.m)-nh/2-1,w+2,nh+2);}
+  }
+  g.globalAlpha=1;
+  if(pos!=null&&pos>=T0&&pos<=T1){g.fillStyle=col.ink;g.fillRect(x(pos)-1,0,2,H);}
+}
+
+/* ---------- 画面の組み立て ---------- */
+const tiles=$("tiles");
+CH.forEach((c,i)=>{
+  const b=document.createElement("button");
+  b.className="tile"; b.type="button"; b.dataset.tile=i;
+  b.innerHTML='<span class="pos"><span>'+(Math.floor(i/4)+1)+"-"+(i%4+1)+(c[4]?" ★":"")+'</span><i class="fn '+c[3]+'">'+FN[c[3]]+'</i></span><span class="nm">'+c[0]+'</span><span class="rn">'+c[1]+'</span><span class="mood">'+c[2]+"</span>";
+  tiles.appendChild(b);
+});
+document.addEventListener("click",e=>{
+  const pb=e.target.closest("[data-demo]");
+  if(pb){ const id=pb.dataset.demo; if(cur&&cur.id===id){stop();return;} start(id,DEMOS[id](),pb); return; }
+  const tl=e.target.closest("[data-tile]");
+  if(tl){ const i=+tl.dataset.tile; start("tile"+i,tileDemo(i),null); }
+});
+$("tempo").addEventListener("input",()=>{
+  $("tempoOut").textContent="♪="+$("tempo").value;
+  if(cur){const now=ctx.currentTime,p=posAt(now);cur.pos0=p;cur.t0=now;cur.spe=spe();}
+});
+["lyMel","lyChord","lyBass"].forEach(id=>$(id).addEventListener("change",()=>{
+  idleEv=build({mel:$("lyMel").checked,chord:$("lyChord").checked,bass:$("lyBass").checked});
+  if(cur&&cur.id==="full") stop();
+  draw(null);
+}));
+function refresh(){readColors();draw(cur?posAt(ctx.currentTime):null);}
+window.addEventListener("resize",refresh);
+if(window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",refresh);
+new MutationObserver(refresh).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(refresh);
+refresh();
+})();
+</script>
+
+</body>
+</html>
